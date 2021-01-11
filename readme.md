@@ -21,6 +21,10 @@ I've found that in many other libraries that have the same promises as this, the
 In many of the other libraries like this, I've found that they nearly always require Boost (Massive), 
 or some other random library that hasn't been used / maintained since 2008. Which makes the process of actually going and using the replacement
 very troublesome. 
+<br>
+#### Learning
+As it stands, I have a lot to learn in C++. And I believe doing this will allow me to learn a lot
+so I'm going to go ahead and do it. 
 
 # Contribute
 
