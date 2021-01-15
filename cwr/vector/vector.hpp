@@ -26,7 +26,6 @@ SOFTWARE.
 #include <memory>
 #include <cstring>
 
-// Todo: Implement move constructor and stuff
 namespace cwr
 {
     template<typename T>
@@ -45,9 +44,41 @@ namespace cwr
             _ensure_capacity(capacity);
         }
 
+        // Copy Constructor
+        vector(const vector &rhs) noexcept
+        {
+            _size     = rhs._size;
+            _capacity = rhs._capacity;
+            _data     = std::make_unique<T[]>(_capacity);
+        }
+
+        // Move Constructor
+        vector(vector &&rhs) noexcept
+            : _size(rhs._size), _capacity(rhs._capacity)
+        {
+            std::swap(_data, rhs._data);
+        }
+
         /*******************
-         * Todo: Assignments
+         * Assignments
          */
+
+        // Copy Assignment
+        vector<T> &operator=(const vector<T> &rhs)
+        {
+            _size     = rhs._size;
+            _capacity = rhs._capacity;
+            _data     = std::make_unique<T[]>(_capacity);
+            std::memcpy(_data, rhs._data, sizeof(T) * _size);
+        }
+
+        // Move assignment
+        vector<T> &operator=(vector<T> &&rhs) noexcept
+          {
+              std::swap(_size, rhs._size);
+              std::swap(_capacity, rhs._capacity);
+              std::swap(_data, rhs._data);
+          }
 
         /****************
          * Element Access
@@ -65,11 +96,7 @@ namespace cwr
 
         [[nodiscard]] const T &back() const noexcept { return _data[_size - 1]; }
 
-        [[nodiscard]] auto data() const noexcept { return _data; }
-
-        /*****************
-         * Todo: Iterators
-         */
+        [[nodiscard]] auto data() const noexcept { return _data.get(); }
 
         /**********
          * Capacity
@@ -109,10 +136,7 @@ namespace cwr
             _size = 0;
         }
 
-        void pop_back() noexcept
-        {
-            _data[--_size].~T();
-        }
+        void pop_back() noexcept { _data[--_size].~T(); }
 
         void push_back(const T &value) noexcept
         {
@@ -133,11 +157,9 @@ namespace cwr
             auto new_data = std::make_unique<T[]>(size);
             _data.swap(new_data);
             _capacity = size;
-            _size = size;
-            for (auto i = 0; i < size; i++)
-                _data[i] = value;
+            _size     = size;
+            for (auto i = 0; i < size; i++) _data[i] = value;
         }
-
 
     private:
         [[nodiscard]] inline auto _has_capacity(uint64_t capacity) const noexcept
@@ -152,8 +174,8 @@ namespace cwr
                 auto new_data = std::make_unique<T[]>(capacity);
                 if (!(_data == nullptr || empty()))
                     std::memmove(
-                      new_data,
-                      _data,
+                      new_data.get(),
+                      _data.get(),
                       _size * sizeof(T));    // Todo - Replace with custom implementation
                 _data.swap(new_data);
                 _capacity = capacity;

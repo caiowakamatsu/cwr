@@ -10,7 +10,7 @@ set(LIBRARY_HEADERS
         cwr/vector/vector.hpp
         )
 
-add_executable(tests tests/vector/test_size.cpp tests/main.cpp tests/vector/test_emplace_back.cpp)
+add_executable(tests tests/vector/test_size.cpp tests/main.cpp tests/vector/test_emplace_back.cpp tests/vector/test_rule_of_five.cpp)
 
 target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR})
 

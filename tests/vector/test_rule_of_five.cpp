@@ -23,28 +23,26 @@ SOFTWARE.
 
 #include <cwr/vector/vector.hpp>
 
-/*
- * I can't figure out how this test is very useful, but I guess if we try to optimize things
- * having something that should be trivial tested, and keeping a 100% code coverage
- * is a good idea. So this is staying
- */
-TEST_CASE("Vector Emplace", "[vector.linear]")
+TEST_CASE("Vector rule of five", "[vector.linear]")
 {
-    class Test
-    {
-    public:
-        int    a;
-        double b;
-        Test() : a(0), b(0) { }
-        Test(int a, double b) : a(a), b(b) { }
-    };
+    auto odd_numbers = cwr::vector<int>();
+    odd_numbers.reserve(10);
+    for (auto i = 1; i < 10 * 2; i += 2) odd_numbers.push_back(i);
 
-    auto vector = cwr::vector<Test>();
-    vector.emplace_back(1, 3.5847);
-    vector.emplace_back(8, 6.9420);
+    auto even_numbers = cwr::vector<int>();
+    even_numbers.reserve(10);
+    for (auto i = 0; i < 10 * 2; i += 2) even_numbers.push_back(i);
 
-    REQUIRE(vector[0].a == 1);
-    REQUIRE(vector[0].b == 3.5847);
-    REQUIRE(vector[1].a == 8);
-    REQUIRE(vector[1].b == 6.9420);
+    auto copy_of_odd_numbers = odd_numbers;
+    REQUIRE(copy_of_odd_numbers.data() != odd_numbers.data());
+    REQUIRE(copy_of_odd_numbers.size() == odd_numbers.size());
+    REQUIRE(copy_of_odd_numbers.capacity() == odd_numbers.capacity());
+
+    auto old_even_data(even_numbers.data());
+    auto old_even_size(even_numbers.size());
+    auto old_even_capacity(even_numbers.capacity());
+    auto moved_even_numbers = std::move(even_numbers);
+    REQUIRE(moved_even_numbers.data() == old_even_data);
+    REQUIRE(moved_even_numbers.size() == old_even_size);
+    REQUIRE(moved_even_numbers.capacity() == old_even_capacity);
 }
