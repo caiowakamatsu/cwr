@@ -75,5 +75,5 @@ TEST_CASE("byte_range", "[hash]") {
 }
 
 TEST_CASE("murmur64A", "[hash]") {
-    const auto hash = cwr::hash<cwr::hash_algorithm::md5, 200>("Hello World!");
+    REQUIRE_NOTHROW(cwr::hash<cwr::hash_algorithm::murmur64A, 53>("Hello World!"));
 }
