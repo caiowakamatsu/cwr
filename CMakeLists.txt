@@ -1,17 +1,26 @@
 cmake_minimum_required(VERSION 3.16)
 project(cwr)
 
-find_package(Catch2 REQUIRED)
+Include(FetchContent)
 
-set(CMAKE_CXX_STANDARD 17)
+FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG        v3.0.1 # or a later release
+)
+
+FetchContent_MakeAvailable(Catch2)
+
+set(CMAKE_CXX_STANDARD 20)
 
 set(LIBRARY_HEADERS
-
         cwr/vector/vector.hpp
         )
 
-add_executable(tests tests/vector/test_size.cpp tests/main.cpp tests/vector/test_emplace_back.cpp tests/vector/test_rule_of_five.cpp)
+add_executable(tests
+        tests/bloom_filter.cpp
+        tests/hash.cpp)
 
 target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR})
 
-target_link_libraries(tests PRIVATE Catch2::Catch2)
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
