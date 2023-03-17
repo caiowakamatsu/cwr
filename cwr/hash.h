@@ -183,11 +183,9 @@ namespace cwr
         };
     }
 
-    template<typename Algorithm, size_t OutN, typename T>
-    [[nodiscard]] std::array<std::byte, OutN> hash(T &val)
+    template<typename Algorithm, size_t OutN>
+    [[nodiscard]] std::array<std::byte, OutN> hash(std::span<std::byte> source)
     {
-        auto source = std::array<std::byte, sizeof(T)>();
-        std::memcpy(source.data(), std::data(val), sizeof(T));
         return detail::hash_til<Algorithm, OutN>(source).storage;
     }
 }    // namespace cwr

@@ -24,10 +24,14 @@ SOFTWARE.
 #include <cwr/bloom_filter.h>
 
 TEST_CASE("adding elements", "[bloom_filter]") {
-    auto filter = cwr::bloom_filter<std::string, 53>();
+    auto filter = cwr::bloom_filter<std::string, 53>([](auto str){
+                                                         auto bytes = std::vector<std::byte>(str.size());
+                                                         std::memcpy(bytes.data(), str.data(), str.size());
+                                                         return bytes;
+    });
     filter.add(std::string("Hello world!"));
     filter.add(std::string("Hello world!"));
-//    REQUIRE(filter.exists("boo") == false);
+    REQUIRE(filter.exists("boo") == false);
     REQUIRE(filter.exists(std::string("Hello world!")) == true);
     auto c= 5;
 }

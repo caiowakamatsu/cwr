@@ -23,6 +23,7 @@ SOFTWARE.
 #include <cstdint>
 #include <vector>
 #include <bitset>
+#include <functional>
 #include "hash.h"
 
 namespace cwr
@@ -31,12 +32,14 @@ namespace cwr
     class bloom_filter {
     private:
         std::bitset<ByteCount * 8> bits = {};
+        std::function<std::vector<std::byte>(T)> view_bytes;
 
     public:
-        bloom_filter() = default;
+        bloom_filter(std::function<std::vector<std::byte>(T)> view_bytes) : view_bytes(std::move(view_bytes)) {};
 
         void add(T val) {
-            const auto hash = cwr::hash<cwr::hash_algorithm::murmur64A, ByteCount>(val);
+            auto data = view_bytes(val);
+            const auto hash = cwr::hash<cwr::hash_algorithm::murmur64A, ByteCount>(std::span<std::byte>(data));
             for (size_t i = 0; i < ByteCount; i++) {
                 const auto byte = hash[i];
                 for (size_t j = 0; j < 8; j++) {
@@ -46,7 +49,8 @@ namespace cwr
         }
 
         [[nodiscard]] bool exists(T val) {
-            const auto hash = cwr::hash<cwr::hash_algorithm::murmur64A, ByteCount>(val);
+            auto data = view_bytes(val);
+            const auto hash = cwr::hash<cwr::hash_algorithm::murmur64A, ByteCount>(std::span<std::byte>(data));
             for (size_t i = 0; i < ByteCount; i++) {
                 const auto byte = hash[i];
                 for (size_t j = 0; j < 8; j++) {
