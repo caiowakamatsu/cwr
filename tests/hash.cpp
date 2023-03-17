@@ -76,4 +76,7 @@ TEST_CASE("byte_range", "[hash]") {
 
 TEST_CASE("murmur64A", "[hash]") {
     REQUIRE_NOTHROW(cwr::hash<cwr::hash_algorithm::murmur64A, 53>("Hello World!"));
+    auto a = cwr::hash<cwr::hash_algorithm::murmur64A, 53>("Hello World!");
+    auto b = cwr::hash<cwr::hash_algorithm::murmur64A, 53>("Hello World!");
+    auto c = 1;
 }
